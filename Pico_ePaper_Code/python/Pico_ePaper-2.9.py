@@ -68,11 +68,14 @@ class EPD_2in9(framebuf.FrameBuffer):
         self.dc_pin = Pin(DC_PIN, Pin.OUT)
         self.busy_pin = Pin(BUSY_PIN, Pin.IN, Pin.PULL_UP)
         self.cs_pin = Pin(CS_PIN, Pin.OUT)
+
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
-        
+
+        # This is a lookup table that defines some sort of 
+        # update waveform
         self.lut = WF_PARTIAL_2IN9
-        
+
         self.spi = SPI(1)
         self.spi.init(baudrate=4000_000)
 

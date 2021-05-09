@@ -59,3 +59,34 @@ All characters have dimensions of 8x8 pixels and there is currently no way to ch
 https://forum.micropython.org/viewtopic.php?f=18&t=6319&sid=b3a986da757addfcebf8b03bbaae7fd4&start=10
 
 I should look at setting up a testable python playpen.
+
+
+bitlocker
+username
+pw
+keypass
+yyvtk password
+
+https://github.com/olikraus/u8g2/issues/318
+
+The LUT contains the display specific waveform for the pixel programming of the display.
+
+https://electronics.stackexchange.com/questions/545758/lut-from-otp-vs-lut-from-register-on-e-paper-displays
+
+
+Idea of using a rocker switch for up/down/left/right/enter.
+Very appealing from a soldering point of view.
+
+Requires 5v input (? maybe get away with 3v? What is the output?) pico is only 3 volt tolerant.
+
+https://shop.pimoroni.com/products/analog-2-axis-thumb-joystick-with-select-button-breakout-board?variant=311234333&currency=GBP&utm_source=google&utm_medium=cpc&utm_campaign=google+shopping?utm_source=google&utm_medium=surfaces&utm_campaign=shopping&gclid=CjwKCAjw7diEBhB-EiwAskVi162LioW5Er9nX6ccUfuBwRu345fiocthPpTp3TpT-VOjfYNxjhyvlRoCe1IQAvD_BwE
+
+Adafruit version is usable up to 5V.
+X and Y act like 10k pots.
+
+I can get 5V from the top right pin when powered from USB.
+
+The switch button on the rocker is normally open - connected to ground when pushed. Doesn't seem to have a pull-up?
+
+https://learn.adafruit.com/pro-trinket-usb-hid-mouse/example-joystick-mouse
+2-axis joystick connected to pins A0 and A1 with pushbutton on D10
