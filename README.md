@@ -90,3 +90,4 @@ The switch button on the rocker is normally open - connected to ground when push
 
 https://learn.adafruit.com/pro-trinket-usb-hid-mouse/example-joystick-mouse
 2-axis joystick connected to pins A0 and A1 with pushbutton on D10
+

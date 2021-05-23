@@ -281,6 +281,16 @@ def drawSelectedOption(epd,oldSelection,newSelection):
     epd.rect(     30, 280, 5, 5, 0x00)
 
 def mainTask():
+
+    button0 = Pin(0, Pin.IN, Pin.PULL_DOWN)
+    button1 = Pin(1, Pin.IN, Pin.PULL_DOWN)
+    button2 = Pin(2, Pin.IN, Pin.PULL_DOWN)
+    button3 = Pin(3, Pin.IN, Pin.PULL_DOWN)
+    button4 = Pin(4, Pin.IN, Pin.PULL_DOWN)
+    button5 = Pin(5, Pin.IN, Pin.PULL_DOWN)
+
+
+
     epd = EPD_2in9()
     epd.Clear(0xff)
     epd.fill(0xff)
@@ -296,6 +306,20 @@ def mainTask():
 
     print("sleep")
     epd.sleep()
+
+    while True:
+        if button0.value():
+            print("button 0")
+        if button1.value():
+            print("button 1")
+        if button2.value():
+            print("button 2")
+        if button3.value():
+            print("button 3")
+        if button4.value():
+            print("button 4")
+        if button5.value():
+            print("button 5")
 
 if __name__=='__main__':
     mainTask()
