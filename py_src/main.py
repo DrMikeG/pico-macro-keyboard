@@ -31,6 +31,7 @@ from machine import Pin, SPI
 import framebuf
 import utime
 
+
 # Display resolution
 EPD_WIDTH       = 128
 EPD_HEIGHT      = 296
@@ -75,6 +76,10 @@ class EPD_2in9(framebuf.FrameBuffer):
         
         self.spi = SPI(1)
         self.spi.init(baudrate=4000_000)
+        # UI state data
+        self.ui_page = 0
+        self.ui_page_max = 3
+
 
         self.buffer = bytearray(self.height * self.width // 8)
         super().__init__(self.buffer, self.width, self.height, framebuf.MONO_HLSB)
@@ -265,6 +270,8 @@ class EPD_2in9(framebuf.FrameBuffer):
         self.delay_ms(2000)
         self.module_exit()
 
+
+
 def countCycles():
     return 10
 
@@ -280,6 +287,33 @@ def drawSelectedOption(epd,oldSelection,newSelection):
     epd.fill_rect(10, 280, 5, 5, 0x00)
     epd.rect(     30, 280, 5, 5, 0x00)
 
+def drawPageIndicators(epd):
+    #epd.fill_rect(10, 280, 5, 5, 0x00)
+    xStart = 10
+    xStep = 20
+    yStart = 280
+    yStep = 0
+    squareSize = 5
+    for i in range(0,epd.ui_page_max):
+        if i == epd.ui_page:
+            epd.fill_rect(xStart+(i*xStep), yStart+(i*yStep), squareSize, squareSize, 0x00)
+        else:
+            # file white
+            epd.fill_rect(xStart+(i*xStep), yStart+(i*yStep), squareSize, squareSize, 0xff)
+            # outline black
+            epd.rect(xStart+(i*xStep), yStart+(i*yStep), squareSize, squareSize, 0x00)
+    #epd.rect(10, 280, 5, 5, 0x00)
+    #epd.rect(30, 280, 5, 5, 0x00)
+    #epd.rect(50, 280, 5, 5, 0x00)
+    #epd.rect(70, 280, 5, 5, 0x00)
+
+def updateEPDThenSleep(epd):
+    drawOptions(epd)
+    drawPageIndicators(epd)
+    epd.display(epd.buffer)
+    #print("sleep")
+    #epd.sleep()
+
 def mainTask():
 
     button0 = Pin(0, Pin.IN, Pin.PULL_DOWN)
@@ -289,23 +323,10 @@ def mainTask():
     button4 = Pin(4, Pin.IN, Pin.PULL_DOWN)
     button5 = Pin(5, Pin.IN, Pin.PULL_DOWN)
 
-
-
     epd = EPD_2in9()
     epd.Clear(0xff)
     epd.fill(0xff)
-
-    drawOptions(epd)
-
-    epd.fill_rect(10, 280, 5, 5, 0x00)
-    epd.rect(30, 280, 5, 5, 0x00)
-    epd.rect(50, 280, 5, 5, 0x00)
-    epd.rect(70, 280, 5, 5, 0x00)
-
-    epd.display(epd.buffer)
-
-    print("sleep")
-    epd.sleep()
+    updateEPDThenSleep(epd)
 
     while True:
         if button0.value():
@@ -320,6 +341,10 @@ def mainTask():
             print("button 4")
         if button5.value():
             print("button 5")
+            
+            epd.ui_page = (epd.ui_page+1) % epd.ui_page_max
+            print(epd.ui_page)
+            updateEPDThenSleep(epd)
 
 if __name__=='__main__':
     mainTask()
