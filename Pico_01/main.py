@@ -98,6 +98,7 @@ def main():
             print("You pressed button 4")
             pretendToBeKeyboard(4)
             time.sleep(0.25)
+        time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
