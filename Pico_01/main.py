@@ -20,39 +20,41 @@
 import time
 import board
 import digitalio
+import usb_hid
+from adafruit_hid.keyboard import Keyboard
+from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
+from adafruit_hid.keycode import Keycode
  
 from third_party.waveshare import epd2in9 as connected_epd
 
-def sample_keys():
-    """Yields four bools representing the button press state on the 2.7" EPD.
-    
-    The 2.7 inch EPD rpi hat has four push buttons connected to RPI hat pins.
+keys_pressed = ["Button 0","Button 1","Button 2","Button 3","Button 4"]
 
-    Follow the traces to see which pins those are and wire them up to digital
-    inputs D2 through D5 on your CircuitPython device.  A button press grounds
-    the pin.
+keyboard = Keyboard(usb_hid.devices)
+keyboard_layout = KeyboardLayoutUS(keyboard)  # We're in the US :)
 
-    This function samples them all and yields four bools for each button.
-    """
-    """
-    DigitalInOut = digitalio.DigitalInOut
-    Pull = digitalio.Pull
-    with DigitalInOut(board.D2) as key1, DigitalInOut(board.D3) as key2, \
-            DigitalInOut(board.D4) as key3, DigitalInOut(board.D5) as key4:
-        key1.switch_to_input(Pull.UP)
-        key2.switch_to_input(Pull.UP)
-        key3.switch_to_input(Pull.UP)
-        key4.switch_to_input(Pull.UP)
-        for k in (key1, key2, key3, key4):
-            yield not k.value  # False is pressed
-     """
-        
+def pretendToBeKeyboard(button):
+    keyboard.release_all()  # ..."Release"!
+    key = keys_pressed[button]  # Get the corresponding Keycode or string
+    if isinstance(key, str):  # If it's a string...
+        keyboard_layout.write(key)  # ...Print the string
+        keyboard.release_all()  # ..."Release"!
+
+
 def main():
+
+    led = digitalio.DigitalInOut(board.LED)
+    led.direction = digitalio.Direction.OUTPUT
 
     button0 = digitalio.DigitalInOut(board.GP0)
     button0.switch_to_input(pull=digitalio.Pull.DOWN)
     button1 = digitalio.DigitalInOut(board.GP1)
     button1.switch_to_input(pull=digitalio.Pull.DOWN)
+    button2 = digitalio.DigitalInOut(board.GP2)
+    button2.switch_to_input(pull=digitalio.Pull.DOWN)
+    button3 = digitalio.DigitalInOut(board.GP3)
+    button3.switch_to_input(pull=digitalio.Pull.DOWN)
+    button4 = digitalio.DigitalInOut(board.GP4)
+    button4.switch_to_input(pull=digitalio.Pull.DOWN)
 
     epd = connected_epd.EPD()
     print("Initializing display...")
@@ -70,12 +72,32 @@ def main():
   
     print("Done.")
     while True:
+        led.value = True
         if button0.value:
+            led.value = False
             print("You pressed button 0")
-            time.sleep(0.1)
+            pretendToBeKeyboard(0)
+            time.sleep(0.25)
         if button1.value:
+            led.value = False
             print("You pressed button 1")
-            time.sleep(0.1)
+            pretendToBeKeyboard(1)
+            time.sleep(0.25)
+        if button2.value:
+            led.value = False
+            print("You pressed button 2")
+            pretendToBeKeyboard(2)
+            time.sleep(0.25)
+        if button3.value:
+            led.value = False
+            print("You pressed button 3")
+            pretendToBeKeyboard(3)
+            time.sleep(0.25)
+        if button4.value:
+            led.value = False
+            print("You pressed button 4")
+            pretendToBeKeyboard(4)
+            time.sleep(0.25)
 
 if __name__ == '__main__':
     main()
