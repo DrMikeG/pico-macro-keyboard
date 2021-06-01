@@ -17,10 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import time
 import board
 import digitalio
-import monobitmap
-
  
 from third_party.waveshare import epd2in9 as connected_epd
 
@@ -47,26 +46,13 @@ def sample_keys():
         for k in (key1, key2, key3, key4):
             yield not k.value  # False is pressed
      """
-
-class StatusLED:
-    """Dumbed down for simple pico LED"""
-
-    def __init__(self):
-        self._led = digitalio.DigitalInOut(board.LED)
-        self._led.direction = digitalio.Direction.OUTPUT
-
-    def off(self):
-        self._led.value = False
-
-    def busy(self):
-        self._led.value = True
-
-    def ready(self):
-        self._led.value = True
         
 def main():
-    led = StatusLED()
-    led.busy()
+
+    button0 = digitalio.DigitalInOut(board.GP0)
+    button0.switch_to_input(pull=digitalio.Pull.DOWN)
+    button1 = digitalio.DigitalInOut(board.GP1)
+    button1.switch_to_input(pull=digitalio.Pull.DOWN)
 
     epd = connected_epd.EPD()
     print("Initializing display...")
@@ -75,37 +61,21 @@ def main():
     print("Displaying.")
     epd.clear_frame_memory(0xff)
     epd.display_frame()
-
-    # True is white
-    # False is black
-
     
     #epd.display_bitmap(notFractal.bit_buf, fast_ghosting=True)
     with open("PAGE01.bin", "rb") as binary_file:
         #Read the whole file at once
         PAGE_01 = binary_file.read()
-        
-    notFractal = monobitmap.MonoBitmap(epd.width, epd.height)
-    bitIndex = 0
-    for y in range(0,epd.height):
-        for x in range(0,epd.width):
-            byteIndex = (bitIndex // 8)
-            bitOffset = (bitIndex % 8)
-            bitMask = 1 << bitOffset
-            byteI = PAGE_01[byteIndex]
-            val = byteI & bitMask
-            if (int(val) == 0):
-            #    print(0, end='')
-                notFractal.set_pixel(x, y, True)
-            else:
-            #    print(1, end='')
-                notFractal.set_pixel(x, y, False )
-            bitIndex = bitIndex + 1    
-        #print("")
-    epd.display_bitmap(notFractal.bit_buf, fast_ghosting=True)
+    epd.display_bitmap(PAGE_01, fast_ghosting=True)
   
     print("Done.")
-
+    while True:
+        if button0.value:
+            print("You pressed button 0")
+            time.sleep(0.1)
+        if button1.value:
+            print("You pressed button 1")
+            time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
