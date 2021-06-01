@@ -29,18 +29,32 @@
 import adafruit_bus_device.spi_device
 import board
 import digitalio
+import busio
 
 # Pin definition as hooked up on my Metro M4 (reassigned to instances in init)
 # These pins are also present on the ItsyBitsy M4
-RST_PIN = board.D11
-DC_PIN = board.D9
-CS_PIN = board.D10
-BUSY_PIN = board.D7
+RST_PIN = board.GP12
+DC_PIN = board.GP8
+CS_PIN = board.GP9
+BUSY_PIN = board.GP13
+
+# SPI1_MOSI Pin 11
+# SPI1_MISO Pin 8
+
+# We want SPI 1 on PICO
+# SPI 1 RX = GP8     Data/Command control pin (High: Data; Low: Command)
+# SPI 1 CSn = GP9    CLK SCK pin of SPI interface, clock input
+# SPI 1 SCK = GP10    SCK pin of SPI interface, clock input
+# SPI 1 Tx = GP11    MOSI pin of SPI interface, data transmitted from Master to Slave.
+# SPI 1 Rx = GP12    Reset pin, low active
+# SPI 1 CSn? = GP13    Busy pin
+
 
 #_SPI_MOSI = board.MOSI
 #_SPI_CLK = board.SCK
-_SPI_MOSI = board.A2
-_SPI_CLK = board.A3
+_SPI_MOSI = board.GP11
+_SPI_MISO = board.GP12
+_SPI_CLK = board.GP10
 _SPI_BUS = None
 _init = False
 
@@ -67,6 +81,8 @@ def epd_io_bus_init():
     BUSY_PIN = DInOut(BUSY_PIN)
     BUSY_PIN.direction = INPUT
     global _SPI_BUS
+
+    """
     # bus vs bitbang isn't really important for slow displays, detecting
     # when to use one vs the other is overkill...
     if (_SPI_CLK == getattr(board, 'SCK', None) and
@@ -77,5 +93,18 @@ def epd_io_bus_init():
     _SPI_BUS = adafruit_bus_device.spi_device.SPIDevice(
             io_module.SPI(_SPI_CLK, _SPI_MOSI), CS_PIN,
             baudrate=2000000)
+    """
+
+    # To setup a SPI bus, you specify the SCK, MOSI (microcontroller out, sensor in), and MISO (microcontroller in, sensor out) pins.
+    # The Pico uses a different naming convention for these:
+    # SPIx_SCK = SCK
+    # SPIx_TX = MOSI
+    # SPIx_RX = MISO
+
+    #with busio.SPI(_SPI_CLK, _SPI_MOSI, _SPI_MISO) as spi_bus:
+    #   _SPI_BUS = SPIDevice(spi_bus, CS_PIN)
+    #_SPI_BUS = busio.SPI(_SPI_CLK, _SPI_MOSI, _SPI_MISO)
+    #adafruit_bus_device.spi_device.SPIDevice(spi, chip_select=None, *, baudrate=100000, polarity=0, phase=0, extra_clocks=0)
+    _SPI_BUS = adafruit_bus_device.spi_device.SPIDevice(busio.SPI(_SPI_CLK, _SPI_MOSI),CS_PIN ,baudrate=4000_000)
 
 ### END OF FILE ###

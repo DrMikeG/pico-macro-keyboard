@@ -27,9 +27,14 @@
 # THE SOFTWARE.
 #
 
-from machine import Pin, SPI
-import framebuf
-import utime
+
+import adafruit_bus_device.spi_device
+import board
+import digitalio
+import busio
+
+#from machine import Pin, SPI
+#import utime
 
 
 # Display resolution
@@ -63,7 +68,10 @@ WF_PARTIAL_2IN9 = [
     0x22,0x17,0x41,0xB0,0x32,0x36,
 ]
 
-class EPD_2in9(framebuf.FrameBuffer):
+class FrameBuffer(buffer, width, height):
+    def __init__(self):
+
+class EPD_2in9(FrameBuffer):
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
         self.dc_pin = Pin(DC_PIN, Pin.OUT)

@@ -36,6 +36,8 @@ It reappears as device pico, and then as CIRCUITPY drive.
 
 https://learn.adafruit.com/welcome-to-circuitpython/the-circuitpy-drive
 
+Opening Mu editor
+
 The CIRCUITPY drive is where your code and the necessary libraries and files will live. You can edit your code directly on this drive and when you save, it will run automatically. 
 
 The demo code I have is micropython not circuit python.
@@ -91,3 +93,11 @@ The switch button on the rocker is normally open - connected to ground when push
 https://learn.adafruit.com/pro-trinket-usb-hid-mouse/example-joystick-mouse
 2-axis joystick connected to pins A0 and A1 with pushbutton on D10
 
+https://learn.adafruit.com/circuitpython-display-support-using-displayio/library-overview
+
+https://learn.adafruit.com/circuitpython-display-support-using-displayio/ui-quickstart
+
+
+https://blog.adafruit.com/2019/09/04/new-guide-saving-circuitpython-bitmaps-and-screenshots-circuitpython-graphics-adafruitlearningsystem-adafruit/
+
+http://www.zilogic.com/blog/tutorial-glcd-bitmaps.html
