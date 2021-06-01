@@ -395,6 +395,38 @@ PAGE_01 = bytes([
  0x00,0x00,0x00,0x80,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
  0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff])
 
+class MonoBitmap:
+    """A monochrome bitmap stored compactly.
+
+    Attributes:
+      bit_buf: The raw bitmap buffer bytearray.  Do not resize!
+      width: The width.  Do not modify.
+      height: The height.  Do not modify.
+
+    Usage:
+      hidden_cat = MonoBitmap(204, 112)
+      hidden_cat.set_pixel(42, 23, 0)
+      epd.display_frame_buf(hidden_cat.bit_buf)
+    """
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.bit_buf = bytearray(width * height // 8)
+
+    def set_pixel(self, x: int, y: int, value: bool) -> None:
+        #assert self.width > x >= 0
+        #assert self.height > y >= 0
+        binary_idx = self.width * y + x
+        #byte_idx, bit_no = divmod(binary_idx, 8)
+        #bit_no = 7 - bit_no  # The EPD's bit order.
+        byte_idx = binary_idx >> 3
+        bit_no = 7 - (binary_idx & 7)
+        if value:
+            self.bit_buf[byte_idx] |= (1 << bit_no)
+        else:
+            self.bit_buf[byte_idx] &= ~(1 << bit_no)
+
+
 bitIndex = 0
 
 #with open("PAGE01Simple.bin", "rb") as binary_file:
@@ -408,6 +440,7 @@ bitIndex = 0
 #print("byte 4 =  {}".format( format(PAGE_01[4], '08b') ))
 #print("byte 5 =  {}".format( format(PAGE_01[5], '08b') ))
 
+notFractal = MonoBitmap(128, 256)
 
 for y in range(0,256):
     for x in range(0,128):
@@ -423,11 +456,18 @@ for y in range(0,256):
         val = byteI & bitMask
         #print("byte 2 =  {} {} ".format( format(val, '08b'),int(val) > 0 ))
         #print("byte 2 =  {} {} ".format( format(val, '08b'),int(val) > 0 ))
-        
         if (int(val) == 0):
             print(0, end='')
+            notFractal.set_pixel(x, y, True)
         else:
             print(1, end='')
-        #print(bin(byteI)[2:]) 
+            notFractal.set_pixel(x, y, False )
         bitIndex = bitIndex + 1
+    print("")
+
+byteCount = 0
+for row in range(0,256):
+    for col in range(0,16):
+        print("{}".format(format(notFractal.bit_buf[byteCount], '08b') ), end='')
+        byteCount = byteCount + 1
     print("")

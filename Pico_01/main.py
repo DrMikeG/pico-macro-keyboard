@@ -95,14 +95,14 @@ def main():
             byteI = PAGE_01[byteIndex]
             val = byteI & bitMask
             if (int(val) == 0):
-                print(0, end='')
+            #    print(0, end='')
                 notFractal.set_pixel(x, y, True)
             else:
-                print(1, end='')
+            #    print(1, end='')
                 notFractal.set_pixel(x, y, False )
             bitIndex = bitIndex + 1    
-        print("")
-    epd.display_bitmap(notFractal.bit_buf, fast_ghosting=True)        
+        #print("")
+    epd.display_bitmap(notFractal.bit_buf, fast_ghosting=True)
   
     print("Done.")
 
