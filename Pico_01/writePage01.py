@@ -397,14 +397,21 @@ PAGE_01 = bytes([
 ])
 
 
-print(format(PAGE_01[600], '08b'))
-print(int(format(PAGE_01[600], '08b'),2))
-print(format(PAGE_01[600], '08b')[::-1] )
-print(int(format(PAGE_01[600], '08b')[::-1],2))
+
+#print(int(format(PAGE_01[600], '08b'),2))
+#print(format(-(PAGE_01[600]+1), '08b'))
+#print(format(PAGE_01[600], '08b')[::-1] )
+#print(int(format(PAGE_01[600], '08b')[::-1],2))
+#print(~int(format(PAGE_01[600], '08b')[::-1],2))
 
 # make file
 newFile = open("./PAGE01.bin", "wb")
 # write to file
 for byte in PAGE_01:
-    rbyte = int(format(byte, '08b')[::-1],2)
+    bits = format(byte, '08b')
+    rbits = format(byte, '08b')[::-1]
+    irbits12 = rbits.replace("1","2")
+    irbits01 = irbits12.replace("0","1")
+    irbits20 = irbits01.replace("2","0")
+    rbyte = int(irbits20,2)
     newFile.write(rbyte.to_bytes(1, byteorder='big'))
