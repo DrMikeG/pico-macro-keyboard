@@ -27,23 +27,49 @@ from adafruit_hid.keycode import Keycode
  
 from third_party.waveshare import epd2in9 as connected_epd
 
-keys_pressed = ["Button 0","Button 1","Button 2","Button 3","Button 4"]
+keys_pressed = ["Button 0","Button 1","Button 2","Button 3","Button 4","Button 0b","Button 1b","Button 2b","Button 3b","Button 4b"]
 
 keyboard = Keyboard(usb_hid.devices)
 keyboard_layout = KeyboardLayoutUS(keyboard)  # We're in the US :)
 
+page = 0
+
 def pretendToBeKeyboard(button):
     keyboard.release_all()  # ..."Release"!
-    key = keys_pressed[button]  # Get the corresponding Keycode or string
+    buttonIndex = button
+    if page == 1:
+        buttonIndex = buttonIndex + 5
+    key = keys_pressed[buttonIndex]  # Get the corresponding Keycode or string
     if isinstance(key, str):  # If it's a string...
         keyboard_layout.write(key)  # ...Print the string
         keyboard.release_all()  # ..."Release"!
 
+def displayPage():
+
+    print("Displaying.")
+    epd.clear_frame_memory(0xff)
+    epd.display_frame()
+
+    if (page == 1):
+        epd.display_bitmap(PAGE_01, fast_ghosting=True)
+    else:
+        epd.display_bitmap(PAGE_00, fast_ghosting=True)
 
 def main():
 
+    global epd
+    global page 
+    global PAGE_00
+    global PAGE_01
+
     led = digitalio.DigitalInOut(board.LED)
     led.direction = digitalio.Direction.OUTPUT
+
+    page = 0
+
+    epd = connected_epd.EPD()
+    print("Initializing display...")
+    epd.init()
 
     button0 = digitalio.DigitalInOut(board.GP0)
     button0.switch_to_input(pull=digitalio.Pull.DOWN)
@@ -55,21 +81,23 @@ def main():
     button3.switch_to_input(pull=digitalio.Pull.DOWN)
     button4 = digitalio.DigitalInOut(board.GP4)
     button4.switch_to_input(pull=digitalio.Pull.DOWN)
+    button5 = digitalio.DigitalInOut(board.GP5)
+    button5.switch_to_input(pull=digitalio.Pull.DOWN)
 
-    epd = connected_epd.EPD()
-    print("Initializing display...")
-    epd.init()
+    
+    #epd.display_bitmap(notFractal.bit_buf, fast_ghosting=True)
+    with open("PAGE00.bin", "rb") as binary_file:
+        #Read the whole file at once
+        PAGE_00 = binary_file.read()
 
-    print("Displaying.")
-    epd.clear_frame_memory(0xff)
-    epd.display_frame()
     
     #epd.display_bitmap(notFractal.bit_buf, fast_ghosting=True)
     with open("PAGE01.bin", "rb") as binary_file:
         #Read the whole file at once
         PAGE_01 = binary_file.read()
-    epd.display_bitmap(PAGE_01, fast_ghosting=True)
   
+    displayPage()
+    
     print("Done.")
     while True:
         led.value = True
@@ -98,6 +126,14 @@ def main():
             print("You pressed button 4")
             pretendToBeKeyboard(4)
             time.sleep(0.25)
+        if button5.value:
+            led.value = False
+            print("You pressed button 5")
+            if (page == 1):
+                page = 0
+            else:
+                page = 1
+            displayPage()
         time.sleep(0.1)
 
 if __name__ == '__main__':
