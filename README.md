@@ -1,4 +1,9 @@
 # pico-macro-keyboard
+
+Macropad
+Stream deck - controls update in real-time (LCD keys)
+
+
 First project using a rpi 2040 on a pico
 
 So, because I know I want some GPIO for at least 4 buttons, I am not going to solder male pin headers to every pin on the pico.
@@ -101,3 +106,5 @@ https://learn.adafruit.com/circuitpython-display-support-using-displayio/ui-quic
 https://blog.adafruit.com/2019/09/04/new-guide-saving-circuitpython-bitmaps-and-screenshots-circuitpython-graphics-adafruitlearningsystem-adafruit/
 
 http://www.zilogic.com/blog/tutorial-glcd-bitmaps.html
+
+Great information on 3d printed case design: https://www.hubs.com/blog/cad-modeling-1-enclosures/
