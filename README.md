@@ -108,3 +108,21 @@ https://blog.adafruit.com/2019/09/04/new-guide-saving-circuitpython-bitmaps-and-
 http://www.zilogic.com/blog/tutorial-glcd-bitmaps.html
 
 Great information on 3d printed case design: https://www.hubs.com/blog/cad-modeling-1-enclosures/
+
+# Making bitmaps #
+
+I've been making bitmaps, but I've not written down the process.
+
+I'm making .xbm files out of gimp.
+
+I'm then pre-processing them into bytes the screen can show.
+
+I've got gimp 2.10 installed.
+The .xcf I have has preserved layers.
+My image mode is grey-scale 8 bit
+I#m using san serif bold 36 point text
+My canvas size is 128x296
+
+Exporting as .xbm
+
+Then, with the .xbm, I put the raw byte data into writePage01.py - which edits the bitmap into the e-ink screen format
